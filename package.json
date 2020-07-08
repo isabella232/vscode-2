@@ -54,7 +54,8 @@
     "vscode:prepublish": "npm run clean && npm run compile && webpack --mode production",
     "check": "mongodb-js-precommit './src/**/*{.ts}'",
     "package": "npm list --production --parseable --depth=99999 --loglevel=info || true && vsce package",
-    "local-install": "npm run package && code --install-extension ./mongodb-vscode-*.vsix"
+    "local-install": "npm run package && code --install-extension ./mongodb-vscode-*.vsix",
+    "deploy": "vsce publish"
   },
   "engines": {
     "vscode": "^1.41.0",

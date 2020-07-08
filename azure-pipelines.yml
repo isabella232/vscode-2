@@ -3,8 +3,13 @@ variables:
   node_version: '12.4.0'
 
 trigger:
-  - master
-
+  branches:
+    include:
+      - master
+  tags:
+    include:
+      - master
+      - refs/tags/v*
 # For current versions of vm's using the `*-latest` alias:
 # https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops
 strategy:
@@ -98,3 +103,13 @@ steps:
       PathtoPublish: '$(build.artifactstagingdirectory)'
       ArtifactName: vsix
     condition: in(variables['agent.os'], 'Linux')
+  # On linux, when there is a tag release, and tests pass,
+  # publish the extension to the vscode marketplace.
+  # https://code.visualstudio.com/api/working-with-extensions/continuous-integration
+  - bash: |
+      echo ">>> Publishing to VSCode marketplace..."
+      npm run deploy
+    displayName: Publish
+    env:
+      SEGMENT_KEY: $(segmentKey)
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'), eq(variables['Agent.OS'], 'Linux'))
